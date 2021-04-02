@@ -8,9 +8,9 @@
 
 | Учебная группа | Имя пользователя | ФИО                      |
 |----------------|------------------|--------------------------|
-| 201-322        | [Prostakkotak](github.com/prostakkotak)      | Васьковский С.П.              |
-| 201-322        | [potikhanovsergey](github.com/potikhanovsergey)    | Потиханов С.              |
-| 201-322        | [VanCode111](github.com/VanCode111)       | Елисеев И. |
+| 201-322        | [Prostakkotak](https://github.com/Prostakkotak)      | Васьковский С.П.              |
+| 201-322        | [potikhanovsergey](https://github.com/potikhanovsergey)    | Потиханов С.              |
+| 201-322        | [VanCode111](https://github.com/VanCode111)       | Елисеев И. |
 | 201-322        | @username      | Лобов И. |
 | 201-322        | @username       | Грабовый С.П. |
 
