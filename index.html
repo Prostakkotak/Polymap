@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Leaflet Floor Plan Demo</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""></script>
+  <style>
+    body{
+      margin: 0px;
+    }
+    #map{
+      height: 100vh;
+    }
+    .leaflet-touch .leaflet-control-zoom-in {
+      font-size: 50px;
+      }
+      .leaflet-touch .leaflet-control-zoom-out {
+      font-size: 50px;
+      }
+    .leaflet-touch .leaflet-control-zoom-out {
+      font-size: px;
+      }
+    .leaflet-touch .leaflet-bar a{
+      width: 100px;
+      height: 100px;
+      line-height: 100px;
+    }
+    .find-room{
+      display: flex;
+      width: 500px;
+      height: 50px;
+    }
+    .find-room input{
+      width: 70%;
+      width: 100%;
+      padding: 0px 10px;
+      font-size: 20px;
+      line-height: 50px;
+      border: none;
+      border-bottom: 1px solid #e0e0e0; 
+      outline: none;
+      transition: 0.3s;
+      border-radius: 5px;
+      -webkit-box-shadow: 0px 5px 10px -8px rgba(34, 60, 80, 0.56);
+-moz-box-shadow: 0px 5px 10px -8px rgba(34, 60, 80, 0.56);
+box-shadow: 0px 5px 10px -8px rgba(34, 60, 80, 0.56);
+    }
+    .find-room button{
+      padding: 0px;
+      font-size: 20px;
+      margin-left: 5px;
+      width: 30%;
+      padding: 10px 20px;
+         border: none; 
+         border-radius: 5px;
+         font-family: sans-serif;
+         letter-spacing: 1px;
+         font-size: 16xp;
+         color :#fff ;
+         background-color: #000;
+         outline: none;
+         cursor: pointer;
+         transition: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+ 
+  <div id="map" class="map_position"></div>
+  <script src="geometry.js"></script>
+  <script src="map.js"></script>
+</body>
+
+</html>
