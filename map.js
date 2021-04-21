@@ -13,6 +13,7 @@ var map = L.map('map', {
   rotate: true,
   minZoom: 1,
   maxZoom: 2.5,
+  color: 'white',
   maxBounds: [
     [490, 370],
     [-400, -100]
