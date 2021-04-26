@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'selenium',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
