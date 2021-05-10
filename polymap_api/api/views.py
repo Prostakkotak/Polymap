@@ -1,32 +1,28 @@
-# Django
-from django.shortcuts import render, get_object_or_404, Http404, redirect
-from django.views.generic import View
-from time import sleep
-
 # Django REST
 from rest_framework import views
 from rest_framework.response import Response
 from .serializers import GroupSerializer
 
-# Для скрапера
+# Selenium
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
-import os
-import sys
 
+# Остальное
 import regex as re
+import os
+import httpx
+from time import sleep
 
 
 def deEmojify(text): # Функция для очищения текста от емоджи и лишних пробелов справа/слева
     regrex_pattern = re.compile(pattern = "["
-        u"\U0001F600-\U0001F64F"  # emoticons
-        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-        u"\U0001F680-\U0001F6FF"  # transport & map symbols
-        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        u"\U0001F600-\U0001F64F"
+        u"\U0001F300-\U0001F5FF"
+        u"\U0001F680-\U0001F6FF"
+        u"\U0001F1E0-\U0001F1FF"
                            "]+", flags = re.UNICODE)
     return regrex_pattern.sub(r'',text).strip()
-
 
 class GroupSchedule(views.APIView):
     def get(self, request):
@@ -43,9 +39,7 @@ class GroupSchedule(views.APIView):
                             # C://users//finel//desktop//chromedriver.exe для ЛОКАЛКИ
 
         driver.get('https://rasp.dmami.ru/?' + str(request.GET['group']))
-        sleep(5)
-
-        driver.execute_script("return document.getElementsByTagName('html')[0].innerHTML")
+        sleep(0.2)
 
         data = {"schedule": {}}
 
