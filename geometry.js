@@ -1,4 +1,4 @@
-let states = [{
+let fourFloor = [{
     "type": "Feature",
     "properties": {"party": "Republican"},
     "geometry": {
@@ -36,6 +36,7 @@ let states = [{
     "geometry": {
         "type": "Polygon",
         "name": "Н402",
+        floor: 1,
         "visible": false,
         "coordinates": [[
             [15, 89],
@@ -74,3 +75,4 @@ let states = [{
     }
 }
 ];
+
