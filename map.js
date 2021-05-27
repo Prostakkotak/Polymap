@@ -37,8 +37,7 @@ function getFloors(floorsNames, ibounds){
     if (floor.polygons) {
       let layerPolygons = L.geoJSON(floor.polygons, {style: {fillOpacity: 0, opacity: 0}, onEachFeature() {
         roomsNames.push(onEachFeature(...arguments, layerFloor))}});
-      console.log(roomsNames);
-      floorList.push(layerPolygons);
+        floorList.push(layerPolygons);
     }
     let layerGroup = L.layerGroup(floorList);
     roomsNames.forEach((name) => {
@@ -97,7 +96,7 @@ function changeActive(layer) {
     focutTo(layer);
 }
 
-addSearch('<input id="find"><button onClick="findRoom()">Найти</button>', map);
+addSearch('<input id="find"><button v-on:click="findRoom">Найти</button>', map);
 
 function findRoom () {
   let inputText = document.querySelector("#find");
