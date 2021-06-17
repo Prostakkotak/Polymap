@@ -214,6 +214,7 @@ export default {
         }
     }
 }
+
 </script>
 <style scoped>
 .schedule__column {
