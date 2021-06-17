@@ -61,6 +61,10 @@ export default {
     font-style: normal;
 }
 
+body {
+  position: relative;
+}
+
 :root {
   --orange: #ff8c00;
   --purple: #d043e6;

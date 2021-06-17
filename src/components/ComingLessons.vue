@@ -64,14 +64,14 @@ export default {
     .lesson__time {
         display: flex;
         align-items: center;
-        font-size: 30px;
+        font-size: 1.8rem;
         gap: 10px;
         font-weight: 300;
         line-height: 30px;
     }
 
     .lesson__time .time-icon {
-        font-size: 45px;
+        font-size: 3rem;
     }
 
     .lesson__address {
@@ -79,7 +79,7 @@ export default {
         gap: 20px;
         align-items: center;
         font-weight: 300;
-        font-size: 30px;
+        font-size: 1.8rem;
     }
 
     .lesson_current .campus-link {
@@ -102,19 +102,19 @@ export default {
     }
 
     .lesson__teacher {
-        font-size: 26px;
+        font-size: 1.5rem;
         font-weight: 300;
         opacity: 0.4;
     }
 
      .pair {
         opacity: 0.6;
-        font-size: 36px;
+        font-size: 2rem;
         font-weight: 700;
     }
 
     h2 {
-        font-size: 58px;
+        font-size: 3rem;
         font-weight: 300;
         margin: 0 0 15px;
     }
@@ -134,17 +134,6 @@ export default {
     }
 
     @media (max-width: 720px) {
-        .pair {
-            font-size: 30px;
-        }
-
-        .pair {
-            font-size: 34px;
-        }
-
-        .lesson__teacher {
-            font-size: 20px;
-        }
 
         .lesson__teachers {
             gap: 10px;

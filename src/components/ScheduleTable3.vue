@@ -1,11 +1,14 @@
 <template>
+    <div v-if="isScheduleReady" class="tabs">
+        <button :class="{active: (activetab === id) || (activetab === undefined && id === today - 1)}" class="tab-button" 
+        @click="changeDay(id); activetab=id" v-for="(weekDay, id) in week" :key="weekDay">{{ tabs[id] }} <br> {{weekDay.getDate()}}
+        </button>
+    </div>
     <h1 v-if="scheduleGroupError">Возможно вы неправильно ввели номер группы (пример 201-322)</h1>
     <div v-else-if="isScheduleReady" class="schedule">
-        <day-of-week :weekDay="weekDay" :daySchedule="schedule[id]" v-for="(weekDay, id) in week" :key="weekDay"></day-of-week>
-
+        <day-of-week :selected="selected" :weekDay="weekDay" :daySchedule="schedule[id]" v-for="(weekDay, id) in week" :key="weekDay"></day-of-week>
     </div>
-
-    <Loading v-else />
+     <Loading v-else />
 </template>
 <script>
 import DayOfWeek from './ScheduleDayOfWeek.vue';
@@ -17,6 +20,8 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
     data() {
         return {
+            tabs: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+            selected: null,
         }
     },
     components: {
@@ -24,6 +29,16 @@ export default {
         Loading
     },
     computed: {
+        isButtonActive(id) {
+            if (this.selected === id + 1) {
+                return true;
+            }
+
+            if (id === this.today - 1) {
+                return true;
+            }
+            return false;
+        },
         week() {
             if (this.schedule.length) {
                 let date = new Date();
@@ -37,79 +52,30 @@ export default {
             }
             return [];
         },
+        today() {
+            const date = new Date();
+            return date.getDay();
+        },
 
         ...mapGetters(['schedule', 'group', 'isScheduleReady', 'scheduleGroupError'])
     },
     methods: {
-        ...mapActions(['getSchedule'])
+        ...mapActions(['getSchedule']),
+        changeDay(id) {
+            this.selected = id + 1;
+        }
     },
     created() {
-        // localStorage.clear()
-        console.log(this.schedule)
         if (((this.schedule === null || this.schedule.length === 0) && this.group) || (this.group && !this.isScheduleReady)) {
             this.getSchedule();
         }
-        // axios.get(`http://polymap-api.std-1388.ist.mospolytech.ru/?group=${this.group}&format=json`)
-        // .then(response => {
-        //     this.scheduleJSON = response.data.schedule;
-        //     console.log(this.scheduleJSON);
-        // })
-        // .finally(() => {
-        //     // this.loading = false;
-        //     // console.log(this.scheduleJSON.data.schedule)
-            // for (let i = 0; i < this.scheduleJSON.length; i++) { /* Прогоняем JSON через цикл */
-            //     for (let j = 0; j < this.scheduleJSON[i].length; j++) {
-            //         let temp = this.scheduleJSON[i][j], /* temp - для хранения объекта пары */
-            //             lessonsList = document.getElementsByClassName('schedule__lessons')[i]; /* А это элемент колонки с парами, в которую цикл будет добавлять пару */
-
-            //         let hours = temp['time'].split(':')[0], /* Берем из объекта пары время и режем его чтобы получить час начала занятия (например начало в 16:10, значит мы получим отсюда 16) */
-            //             minutes = temp['time'].split('-')[0].split(':')[1]; /* Тоже самое проделываем чтобы получить минуты начала пары */
-
-
-            //         let cell, /* Переменная для номера ячейки часа, в которую будет добавлена пара */
-            //             subcell = +(minutes[0]) /* А здесь уже номер для подъячейки, которая содержится внутри cell, тк подъячеек всего 6 и их индекс соответствует первой цифре минуты начала, то просто берем из minutes первый символ строки */
-
-            //         /* 
-
-            //             Отвечает за назначение номера ячейки часа, в каждом блоке schedule__lessons есть ячейки shedule__cell,
-            //             каждая на таймлайне длинною в час. Соответственно каждая подъячейка внутри отвечает за 10 минут на таймлайне, поскольку их там всегда 6
-            //         */
-            //        cell = +(hours) - 9;
-
-
-            //         /* 
-            //             По итогу мы имеем индекс для выбора нужной ячейки и индекс для выбора нужной подъячейки.
-
-            //             Ниже в список пар на нужный день добавляется элемент пары, сначала находится нужная ячейка (getElementsByClassName('schedule__cell')[+cell]),
-            //             потом в этой ячейке находится нужная подъячейка (getElementsByClassName('schedule__subcell')[+subcell]),
-            //             и затем уже добавляем в подъячейку HTML элемент пары (HTML элемент генерируем функцией createLessonBlock)
-            //         */
-                    
-            //         lessonsList.getElementsByClassName('schedule__cell')[+cell]
-            //         .getElementsByClassName('schedule__subcell')[+subcell]
-            //         .appendChild(createLessonBlock(temp['name'], temp['auditory']))
-            // }}
-        // })
-        // this.scheduleJSON = JSON.parse(this.schedule) /* ОБЪЕКТ С РАСПИСАНИЕМ */
-
-
-        /* 
-
-        НАСЧЕТ РАБОТЫ API
-
-        API возвращает объект со списком списков пар на каждый день, например список пар на понедельник это будет scheduleJSON[0] и тд.
-
-        В списке scheduleJSON[0] содержатся объекты пар, которые содержат в себе время, ауд., название, даты действительности, преподавательский состав пары.
-
-        Ниже есть цикл со вложенным циклом, внешний цикл идет по дням, внутренний идет по парам на этот день
-                
-        */
-
-
     }
 }
 </script>
 <style>
+.tabs .active {
+    opacity: 1;
+}
 
 .schedule {
     display: flex;
@@ -186,5 +152,41 @@ export default {
 .schedule__day {
     text-transform: capitalize;
 }
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    opacity: .5;
+    display: none;
+}
+
+.tabs {
+    justify-content: space-between;
+    display: flex;
+    margin-bottom: 35px;
+}
+
+
+@media (max-width: 1320px) {
+    .tab-button {
+        display: block;
+    }
+
+    .schedule__day {
+        display: none;
+    }
+}
     
+
+@media (min-width: 1321px) {
+
+    .schedule__column .schedule__time {
+        display: none;
+    }
+
+    .schedule__column:first-child .schedule__time {
+        display: block;
+    }
+}   
 </style>

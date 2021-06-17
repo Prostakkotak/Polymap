@@ -1,5 +1,5 @@
 <template>
- <div class="schedule__column">
+ <div class="schedule__column" :class="active ? 'active' : ''">
     <h3 class="schedule__day">
         {{ dayOfWeek  }}, {{ day }}
     </h3>
@@ -11,7 +11,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">09:00</div>
+            <div class="schedule__time">09:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -20,7 +20,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">10:00</div>
+            <div class="schedule__time">10:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -29,7 +29,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">11:00</div>
+            <div class="schedule__time">11:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -38,7 +38,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">12:00</div>
+            <div class="schedule__time">12:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -47,7 +47,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">13:00</div>
+            <div class="schedule__time">13:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -56,7 +56,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">14:00</div>
+            <div class="schedule__time">14:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -65,7 +65,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">15:00</div>
+            <div class="schedule__time">15:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -74,7 +74,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">16:00</div>
+            <div class="schedule__time">16:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -83,7 +83,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">17:00</div>
+            <div class="schedule__time">17:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -92,7 +92,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">18:00</div>
+            <div class="schedule__time">18:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -101,7 +101,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">19:00</div>
+            <div class="schedule__time">19:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -110,7 +110,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">20:00</div>
+            <div class="schedule__time">20:00</div>
         </div>
         <div class="schedule__cell">
             <div class="schedule__subcell"></div>
@@ -119,7 +119,7 @@
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
             <div class="schedule__subcell"></div>
-            <div v-if="isFirstDayOfWeek" class="schedule__time">21:00</div>
+            <div class="schedule__time">21:00</div>
         </div>
     </div>
 </div>
@@ -152,10 +152,16 @@ function createLessonBlock(name, auditory) { /* Функция для созда
 }
 
 export default {
+    data() {
+        return {
+            shouldShowTime: null
+        }
+    },
     props:[
-        'weekDay', 'daySchedule',
+        'weekDay', 'daySchedule', 'selected',
     ],
     mounted () {
+
         for (let j = 0; j < this.daySchedule.length; j++) {
             let temp = this.daySchedule[j], /* temp - для хранения объекта пары */
                 lessonsList = document.getElementsByClassName('schedule__lessons')[this.weekDay.getDay() - 1]; /* А это элемент колонки с парами, в которую цикл будет добавлять пару */
@@ -198,12 +204,34 @@ export default {
         day() {
             return this.weekDay.getDate();
         },
-        isFirstDayOfWeek() {
-            return this.weekDay.getDay() === 1;
+        active() {
+            if (this.selected) {
+                return this.selected === this.weekDay.getDay();
+            } else {
+                const date = new Date();
+                return this.weekDay.getDay() === date.getDay();
+            }
         }
-    },
+    }
 }
 </script>
-<style>
-    
+<style scoped>
+.schedule__column {
+    transition: .7s ease transform;
+}
+@media (max-width: 1320px) {
+    .schedule__column {
+        transform: translateX(-1000%);
+        visibility: hidden;
+        width: 0;
+    }
+
+    .active {
+        visibility: visible;
+        width: 100%;
+        transform: translateX(0);
+    }
+}
+
+
 </style>

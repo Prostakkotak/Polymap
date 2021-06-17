@@ -30,10 +30,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['group'])
+        ...mapGetters(['group', 'schedule', 'isScheduleReady'])
     },
     methods: {
-        ...mapActions(['selectGroup']),
+        ...mapActions(['selectGroup', 'getSchedule']),
         submitForm() {
             if (this.inputGroup === '') {
                 this.isntValide = true;
@@ -41,6 +41,7 @@ export default {
                 this.selectGroup(this.inputGroup);
                 this.$router.push('/');
                 this.isntValide = false;
+                this.getSchedule();
             }
         }
     },
@@ -51,7 +52,7 @@ export default {
         background-color: #fff;
         border-radius: 0 5px 5px 0;
         padding: 10px 15px;
-        font-size: 42px;
+        font-size: 2rem;
         font-family: "Proxima Nova", Arial, Helvetica, sans-serif;
         color: #b2b2b2;
         transition: 0.6s border-radius ease;
@@ -99,7 +100,7 @@ export default {
 
 
     h1 {
-        font-size: 73px;
+        font-size: 3rem;
         font-weight: 400;
         font-style: normal;
         letter-spacing: normal;
@@ -111,12 +112,8 @@ export default {
         form {
             width: 80%;
         }
-        h1 {
-            font-size: 38px;
-        }
 
         input {
-            font-size: 24px;
             width: 100%;
         }
 

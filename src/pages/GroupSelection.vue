@@ -10,10 +10,11 @@
 </template>
 <script>
 import GroupForm from '../components/GroupForm.vue';
+
 export default {
     components: {
         GroupForm,
-    },
+    }
 }
 </script>
 <style scoped>
