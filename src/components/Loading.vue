@@ -18,6 +18,6 @@ export default {
 </script>
 <style scoped>
      svg {
-          transform: scale(2.5) translateY(40%);
+          transform: scale(2.5) translateY(30%);
      }
 </style>

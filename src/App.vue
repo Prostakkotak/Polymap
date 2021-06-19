@@ -7,7 +7,7 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'App',
   computed: {
-    ...mapGetters(['group', 'schedule']),
+      ...mapGetters(['schedule', 'group', 'isScheduleReady',])
   },
   methods: {
     ...mapActions(['getSchedule'])
@@ -16,7 +16,9 @@ export default {
     if (this.group === null) {
       this.$router.push('select-group')
     }
-
+    if (((this.schedule === null || this.schedule.length === 0) && this.group) || (this.group && !this.isScheduleReady)) {
+        this.getSchedule();
+    }
   },
 }
 </script>

@@ -5,7 +5,7 @@
                 <slot></slot>
             </h1>
             <div class="form-group">
-                <input type="text" v-model="inputGroup">
+                <input placeholder="Пример: 201-322" type="text" v-model="inputGroup">
                 <button>></button>
             </div>
             <div v-if="isntValide" class="invalide">
@@ -35,14 +35,10 @@ export default {
     methods: {
         ...mapActions(['selectGroup', 'getSchedule']),
         submitForm() {
-            if (this.inputGroup === '') {
-                this.isntValide = true;
-            } else {
-                this.selectGroup(this.inputGroup);
-                this.$router.push('/');
-                this.isntValide = false;
-                this.getSchedule();
-            }
+            this.selectGroup(this.inputGroup);
+            this.getSchedule();
+            this.$router.push('/schedule/');
+            this.isntValide = false;
         }
     },
 }
@@ -52,7 +48,7 @@ export default {
         background-color: #fff;
         border-radius: 0 5px 5px 0;
         padding: 10px 15px;
-        font-size: 2rem;
+        font-size: 1.6rem;
         font-family: "Proxima Nova", Arial, Helvetica, sans-serif;
         color: #b2b2b2;
         transition: 0.6s border-radius ease;
@@ -85,11 +81,11 @@ export default {
         top: 8px;
         color: #fff;
         border: none;
-        font-size: 40px;
+        font-size: 1.8rem;
         font-weight: 700;
         cursor: pointer;
         bottom: 8px;
-        width: 80px;
+        width: 40px;
         background-color: #101316;
         border-radius: 5px;
     }
@@ -110,7 +106,7 @@ export default {
 
     @media (max-width: 720px) {
         form {
-            width: 80%;
+            width: 90%;
         }
 
         input {

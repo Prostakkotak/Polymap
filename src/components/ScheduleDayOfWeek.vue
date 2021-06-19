@@ -165,7 +165,6 @@ export default {
         for (let j = 0; j < this.daySchedule.length; j++) {
             let temp = this.daySchedule[j], /* temp - для хранения объекта пары */
                 lessonsList = document.getElementsByClassName('schedule__lessons')[this.weekDay.getDay() - 1]; /* А это элемент колонки с парами, в которую цикл будет добавлять пару */
-            console.log(temp, lessonsList)
 
             let hours = temp['time'].split(':')[0], /* Берем из объекта пары время и режем его чтобы получить час начала занятия (например начало в 16:10, значит мы получим отсюда 16) */
                 minutes = temp['time'].split('-')[0].split(':')[1]; /* Тоже самое проделываем чтобы получить минуты начала пары */
@@ -209,6 +208,9 @@ export default {
                 return this.selected === this.weekDay.getDay();
             } else {
                 const date = new Date();
+                if (date.getDay() === 1) {
+                    return this.weekDay.getDay() === 1;
+                }
                 return this.weekDay.getDay() === date.getDay();
             }
         }

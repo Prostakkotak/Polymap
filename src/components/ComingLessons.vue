@@ -1,48 +1,168 @@
 <template>
-    <div class="lessons">
-        <div class="lesson_current">
+    <h1 v-if="!group.length">{{ noGroupMessage }}</h1>
+    <div v-else-if="isScheduleReady" class="lessons">
+        <h1 v-if="noPairs">{{ noPairsMessage }}</h1>
+
+        <div v-if="currentPair" class="lesson_current">
             <span class="pair">Текущая пара</span>
-            <h2>Название предмета слишком длинное</h2>
+            <h2>{{ currentPair.name }}</h2>
             <div class="lesson__teachers">
-                <div class="lesson__teacher">Преподаватель И.О.</div>
-                <div class="lesson__teacher">Преподаватель И.О.</div>
+                <div v-for="teacher in currentPair.teachers" :key="teacher" class="lesson__teacher">{{ teacher }}</div>
             </div>
             <div class="lesson__info">
                 <div class="lesson__address">
                     <img src="../assets/img/logo2.svg" alt="campus">
                     <router-link class="campus-link" :to="'/map/' + mapNameCurrent">{{mapNameCurrent}}</router-link>
+                    <!-- Здесь должна выводиться ссылка, если название аудитории - это конкретная аудитория,
+                    которая находится в корпусе Политеха, или просто текст, если пара на дистанте  (ЕЩЕ НЕ РЕАЛИЗОВАНО)-->
                 </div> 
                 <div class="lesson__time">
                     <font-awesome-icon class="time-icon" icon="clock"/>
-                    10 мин <br> до конца</div>
+                    {{ beautifulTime(currentPair.timeToEnd) }} <br> до конца
+                </div>
             </div>
         </div>
-        <div class="lesson_upcoming">
+        <div v-if="nextPair" class="lesson_upcoming">
             <span class="pair">Следующая пара</span>
-            <h2>Название предмета слишком длинное</h2>
+            <h2>{{ nextPair.name }}</h2>
             <div class="lesson__teachers">
-                <div class="lesson__teacher">Преподаватель И.О.</div>
+                <div v-for="teacher in nextPair.teachers" :key="teacher" class="lesson__teacher">{{ teacher }}</div>
             </div>
             <div class="lesson__info">
                 <div class="lesson__address">
                     <img src="../assets/img/logo2.svg" alt="campus">
                     <router-link class="campus-link" :to="'/map/' + mapNameNext">{{mapNameNext}}</router-link>
+                    <!-- Здесь должна выводиться ссылка, если название аудитории - это конкретная аудитория,
+                    которая находится в корпусе Политеха, или просто текст, если пара на дистанте (ЕЩЕ НЕ РЕАЛИЗОВАНО)-->
                 </div>
                 <div class="lesson__time">
                     <font-awesome-icon class="time-icon" icon="clock"/>
-                    10 мин <br> до начала</div>
+                    {{ beautifulTime(nextPair.timeToStart) }} <br> до начала
+                </div>
             </div>
         </div>
     </div>
+    <Loading v-else-if="!scheduleGroupError && !isScheduleReady" />
+    <h1 v-else>Введен неправильный номер группы</h1>
 </template>
 <script>
+import {mapGetters} from 'vuex';
+import Loading from './Loading.vue';
+
+
 export default {
+    components: {
+        Loading,
+    },
     data () {
         return {
             mapNameCurrent: 'Н401',
             mapNameNext: 'Н402',
+            currentPair: null,
+            nextPair: null,
+            noPairsMessage: '',
+            noPairs: false,
+            noGroupMessage: 'Выберите группу, чтобы получить расписание, или просто перейдите на страницу с картой',
         }
-    }
+    },
+    watch: {
+        isScheduleReady(newValue) {
+            if (newValue === true) {
+                this.getComingLessons();
+            }
+        }
+    },
+    computed: {
+        ...mapGetters(['schedule', 'group', 'isScheduleReady', 'scheduleGroupError']),
+        beautifulTime(minutes) {
+            if (minutes > 60) {
+                return `${minutes / 60} ч. ${minutes % 60} мин.`;
+            } else {
+                return `${minutes} мин.`;
+            }
+        }
+    },
+    created () {
+        if (this.isScheduleReady) {
+            this.getComingLessons();
+        }
+    },
+    methods: {
+        getComingLessons() {
+            const date = new Date();
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+            const nowTimeValue = hours * 60 + minutes; // минут сейчас
+
+            const todayPairs = this.isScheduleReady ? this.schedule[date.getDay() - 1] : []; // Пары сегодня
+
+            const lastPair = todayPairs.length ? todayPairs[todayPairs.length - 1] : null; // Последняя пара сегодня
+            const lastPairValue = lastPair.time.split('-')[1].split(':')[0] * 60 + (+(lastPair.time.split('-')[1].split(':')[1])) // Ее временной показатель
+            if (this.isScheduleReady) {
+                if (todayPairs.length === 0 || lastPairValue < nowTimeValue) { // Если нет пар, или они закончились, выводим сообщение
+                    this.noPairs = true;
+                    
+                    this.noPairsMessage = 'Пары закончились или их сегодня нет';
+                } else { // Иначе считаем всю инфу про текущую и следующую пару
+                    for (let i = 0; i < todayPairs.length; i++) { // цикл по сегодняшним парам
+
+                        const pair = todayPairs[i]; 
+                        const pairsTime = pair.time.split('-');
+
+                        const pairsTimeValue = pairsTime[1].split(':')[0] * 60 + (+(pairsTime[1].split(':')[1]))
+                        //       ^^^^^^^^ временной показатель пары, нужен для сравнения с nowTimeValue 
+                        //                (определяем, относится ли эта пара к текущей или следующей)
+
+
+                        if (pairsTimeValue - nowTimeValue < 90 && pairsTimeValue - nowTimeValue >= 0) { // Если истина, то эта пара - текущая пара.
+                            this.currentPair = pair;
+                            const teachersNames = [];
+                            for (let j = 0; j < pair.teachers.length; j++) { // Проходимся по циклу преподавателей
+                                const teacher = pair.teachers[j].split(' '); // Здесь массив из фамилии, имени и отчества преподавателя
+                                const teacherName = `${teacher[0]} ${teacher[1][0]}.${teacher[2][0]}.`; // Берем фамилию и инициалы
+
+                                teachersNames.push(teacherName); // Добавляем результат в массив
+                            }
+
+                            this.currentPair.timeToEnd = pairsTimeValue - nowTimeValue;
+
+                            this.currentPair.teachers = teachersNames;
+
+
+                            
+
+                            if (i < (todayPairs.length - 1)) { // Если за текущей парой есть еще какая то пара, 
+
+                                const nextPair = todayPairs[i + 1];
+                                // то эта пара - следующая
+
+                                const teachersNames = [];
+
+                                for (let j = 0; j < nextPair.teachers.length; j++) { // Проходимся по циклу преподавателей
+                                    const teacher = nextPair.teachers[j].split(' '); // Здесь массив из фамилии, имени и отчества преподавателя
+                                    const teacherName = `${teacher[0]} ${teacher[1][0]}.${teacher[2][0]}.`; // Берем фамилию и инициалы
+                                    teachersNames.push(teacherName); // Добавляем результат в массив
+                                }
+
+                                const nextPairsTime = nextPair.time.split('-');
+                                const nextPairsTimeValue = nextPairsTime[1].split(':')[0] * 60 + (+(nextPairsTime[1].split(':')[1]))
+
+
+                                nextPair.teachers = teachersNames;
+                                nextPair.timeToStart = nextPairsTimeValue - 90 - nowTimeValue;
+                                this.nextPair = nextPair; 
+                            }
+                            
+                        }
+
+                        
+                        
+                    }
+                }
+
+            }
+        }
+    },
 }
 </script>
 <style scoped>

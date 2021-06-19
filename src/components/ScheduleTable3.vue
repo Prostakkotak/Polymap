@@ -15,8 +15,7 @@ import DayOfWeek from './ScheduleDayOfWeek.vue';
 import Loading from './Loading.vue';
 
 
-// import axios from 'axios'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
     data() {
         return {
@@ -60,14 +59,8 @@ export default {
         ...mapGetters(['schedule', 'group', 'isScheduleReady', 'scheduleGroupError'])
     },
     methods: {
-        ...mapActions(['getSchedule']),
         changeDay(id) {
             this.selected = id + 1;
-        }
-    },
-    created() {
-        if (((this.schedule === null || this.schedule.length === 0) && this.group) || (this.group && !this.isScheduleReady)) {
-            this.getSchedule();
         }
     }
 }

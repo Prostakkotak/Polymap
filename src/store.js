@@ -3,7 +3,7 @@ import axios from 'axios';
 const store = createStore({
     state() {
         return {
-            group: localStorage.group || null,
+            group: null,
             schedule: null,
             isScheduleReady: null,
             scheduleGroupError: false
@@ -36,7 +36,7 @@ const store = createStore({
             axios.get(`http://polymap-api.std-1388.ist.mospolytech.ru/?group=${state.group}&format=json`)
             .then(response => {
                 if (!response.data.schedule.length) {
-                    throw 'error';
+                    throw 'group error';
                 } else {
                     state.schedule = response.data.schedule;
                     state.isScheduleReady = true;
@@ -44,11 +44,14 @@ const store = createStore({
                 }
 
             })
-            .catch(() => {
-                state.scheduleGroupError = true;
+            .catch((error) => {
+                if (error === 'group error') {
+                    state.scheduleGroupError = true;
+                } else {
+                    this.getSchedule();
+                }
             })
-            // state.schedule = scheduleJSON;
-            // localStorage.schedule = scheduleJSON;
+
         }
 
     },
