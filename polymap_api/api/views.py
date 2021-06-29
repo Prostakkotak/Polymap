@@ -11,7 +11,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 # Остальное
 import regex as re
 import os
-import httpx
 from time import sleep
 
 
@@ -33,7 +32,7 @@ class GroupSchedule(views.APIView):
         opts.add_argument('--disable-dev-shm-usage')
 
         driver = webdriver.Chrome(
-            executable_path='C://users//finel//desktop//chromedriver.exe',
+            executable_path='/home/std/.local/bin/chromedriver',
             options=opts
         )                  # /home/std/.local/bin/chromedriver для СЕРВЕРА
                             # C://users//finel//desktop//chromedriver.exe для ЛОКАЛКИ
@@ -41,16 +40,16 @@ class GroupSchedule(views.APIView):
         driver.get('https://rasp.dmami.ru/?' + str(request.GET['group']))
         sleep(0.2)
 
-        data = {"schedule": {}}
+        data = {"schedule": []}
 
         days = driver.find_elements_by_class_name('schedule-day')
 
+        i = 0
         for day in days:
 
             try:
-                day_title = day.find_element_by_class_name('schedule-day__title').text
 
-                data['schedule'][day_title] = []
+                data['schedule'].append([])
 
                 for pair in day.find_elements_by_class_name('pair'):
                     try:
@@ -67,12 +66,14 @@ class GroupSchedule(views.APIView):
                         except NoSuchElementException:
                             pass
 
-                        data["schedule"][day_title].append(pair_obj)
+                        data["schedule"][i].append(pair_obj)
                     except NoSuchElementException:
                         pass
 
             except NoSuchElementException:
                 pass
+                
+            i += 1
             
 
         driver.quit()
