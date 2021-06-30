@@ -3,7 +3,7 @@ import axios from 'axios';
 const store = createStore({
     state() {
         return {
-            group: null,
+            group: localStorage.group || null,
             schedule: null,
             isScheduleReady: null,
             scheduleGroupError: false

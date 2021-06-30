@@ -18,7 +18,7 @@
                 </div> 
                 <div class="lesson__time">
                     <font-awesome-icon class="time-icon" icon="clock"/>
-                    {{ beautifulTime(currentPair.timeToEnd) }} <br> до конца
+                    {{ currentPair.timeToEnd }} минут <br> до конца
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="lesson__time">
                     <font-awesome-icon class="time-icon" icon="clock"/>
-                    {{ beautifulTime(nextPair.timeToStart) }} <br> до начала
+                    {{ nextPair.timeToStart }} минут<br> до начала
                 </div>
             </div>
         </div>
@@ -75,6 +75,7 @@ export default {
     computed: {
         ...mapGetters(['schedule', 'group', 'isScheduleReady', 'scheduleGroupError']),
         beautifulTime(minutes) {
+            console.log(minutes)
             if (minutes > 60) {
                 return `${minutes / 60} ч. ${minutes % 60} мин.`;
             } else {
@@ -83,9 +84,15 @@ export default {
         }
     },
     created () {
+        // if (this.isScheduleReady) {
+        //     this.getComingLessons();
+        // }
+    },
+    mounted () {
         if (this.isScheduleReady) {
             this.getComingLessons();
         }
+        console.log(this.nextPair, this.currentPair, this.isScheduleReady);
     },
     methods: {
         getComingLessons() {
@@ -93,11 +100,10 @@ export default {
             const hours = date.getHours();
             const minutes = date.getMinutes();
             const nowTimeValue = hours * 60 + minutes; // минут сейчас
-
             const todayPairs = this.isScheduleReady ? this.schedule[date.getDay() - 1] : []; // Пары сегодня
-
+            console.log(todayPairs)
             const lastPair = todayPairs.length ? todayPairs[todayPairs.length - 1] : null; // Последняя пара сегодня
-            const lastPairValue = lastPair.time.split('-')[1].split(':')[0] * 60 + (+(lastPair.time.split('-')[1].split(':')[1])) // Ее временной показатель
+            const lastPairValue = lastPair ? lastPair.time.split('-')[1].split(':')[0] * 60 + (+(lastPair.time.split('-')[1].split(':')[1])) : null; // Ее временной показатель
             if (this.isScheduleReady) {
                 if (todayPairs.length === 0 || lastPairValue < nowTimeValue) { // Если нет пар, или они закончились, выводим сообщение
                     this.noPairs = true;
@@ -108,18 +114,22 @@ export default {
 
                         const pair = todayPairs[i]; 
                         const pairsTime = pair.time.split('-');
-
                         const pairsTimeValue = pairsTime[1].split(':')[0] * 60 + (+(pairsTime[1].split(':')[1]))
                         //       ^^^^^^^^ временной показатель пары, нужен для сравнения с nowTimeValue 
                         //                (определяем, относится ли эта пара к текущей или следующей)
 
-
-                        if (pairsTimeValue - nowTimeValue < 90 && pairsTimeValue - nowTimeValue >= 0) { // Если истина, то эта пара - текущая пара.
+                        if (pairsTimeValue - nowTimeValue < 100 && pairsTimeValue - nowTimeValue >= 0) { // Если истина, то эта пара - текущая пара.
                             this.currentPair = pair;
                             const teachersNames = [];
                             for (let j = 0; j < pair.teachers.length; j++) { // Проходимся по циклу преподавателей
                                 const teacher = pair.teachers[j].split(' '); // Здесь массив из фамилии, имени и отчества преподавателя
-                                const teacherName = `${teacher[0]} ${teacher[1][0]}.${teacher[2][0]}.`; // Берем фамилию и инициалы
+                                let teacherName = '';
+                                if (teacher.length === 2) {
+                                    teacherName = `${teacher[0]} ${teacher[1]}`;
+                                } else {
+                                    teacherName = teacher ? `${teacher[0]} ${teacher[1][0]}.${teacher[2][0]}.` : null; // Берем фамилию и инициалы
+                                }
+
 
                                 teachersNames.push(teacherName); // Добавляем результат в массив
                             }
@@ -140,7 +150,12 @@ export default {
 
                                 for (let j = 0; j < nextPair.teachers.length; j++) { // Проходимся по циклу преподавателей
                                     const teacher = nextPair.teachers[j].split(' '); // Здесь массив из фамилии, имени и отчества преподавателя
-                                    const teacherName = `${teacher[0]} ${teacher[1][0]}.${teacher[2][0]}.`; // Берем фамилию и инициалы
+                                    let teacherName = '';
+                                    if (teacher.length === 2) {
+                                        teacherName = `${teacher[0]} ${teacher[1]}`
+                                    } else {
+                                        teacherName = `${teacher[0]} ${teacher[1][0]}.${teacher[2][0]}.`; // Берем фамилию и инициалы
+                                    }
                                     teachersNames.push(teacherName); // Добавляем результат в массив
                                 }
 
@@ -234,7 +249,7 @@ export default {
     }
 
     h2 {
-        font-size: 3rem;
+        font-size: 2.2rem;
         font-weight: 300;
         margin: 0 0 15px;
     }

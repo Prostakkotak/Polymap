@@ -62,6 +62,9 @@ export default {
         changeDay(id) {
             this.selected = id + 1;
         }
+    },
+    mounted() {
+        console.log(this.schedule)
     }
 }
 </script>

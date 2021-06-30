@@ -220,6 +220,11 @@ export default {
       background: #fff  !important; 
       outline: 0;
     }
+
+  .leaflet-control-container {
+    z-index: 100000;
+  }
+
     .leaflet-touch .leaflet-control-zoom-in {
       font-size: 20px;
       color: gray;
@@ -347,7 +352,7 @@ export default {
       margin-left: 10px;
     }
     .map__find-block{
-      width: calc(100% - 40px);
+      width: calc(100% - 50px);
     }
     }
 </style>
