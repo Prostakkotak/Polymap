@@ -13,12 +13,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'std_1388_polymap',
-        'USER': 'std_1388_polymap',
-        'PASSWORD': 'vaskovsky',
-        'HOST': 'std-mysql.ist.mospolytech.ru',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join('db.sqlite3'),
     }
 }
 
@@ -26,3 +22,6 @@ DATABASES = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATIC_DIR = os.path.join(BASE_DIR, "static")
 # STATICFILES_DIRS = (STATIC_DIR,)
+
+
+DRIVER_PATH = '/home/std/.local/bin/chromedriver'
