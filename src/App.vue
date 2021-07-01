@@ -70,6 +70,8 @@ body {
 :root {
   --orange: #ff8c00;
   --purple: #d043e6;
+  --green: #31cb00;
+  --red: #ff0000;
 }
 
 html {
@@ -107,5 +109,24 @@ ul {
 
 input:focus, button:focus {
   outline: none;
+}
+
+.exam {
+
+}
+
+.schedule__lessons .consultation {
+  background-color: #fff;
+  color: #333;
+}
+
+.schedule__lessons .exam {
+  background-color: var(--red);
+  color: #fff;
+}
+
+.schedule__lessons .credit {
+  background-color: var(--green);
+  color: #fff;
 }
 </style>

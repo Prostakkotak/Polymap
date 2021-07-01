@@ -125,7 +125,7 @@
 </div>
 </template>
 <script>
-function createLessonBlock(name, auditory) { /* Функция для создания блока lesson. name - Название пары, auditory - аудитория */
+function createLessonBlock(name, auditory, type) { /* Функция для создания блока lesson. name - Название пары, auditory - аудитория */
 
     /* Создание самого блока, элементов внутри него */
     let lessonBlock = document.createElement('div'),
@@ -135,9 +135,9 @@ function createLessonBlock(name, auditory) { /* Функция для созда
 
     /* Присваиваем классы созданным элементам */
     lessonBlock.classList.add('lesson', 'schedule__lesson')
-    lessonDecorator.classList.add('lesson__decorator')
+    lessonDecorator.classList.add('lesson__decorator', type)
     lessonName.classList.add('lesson__name')
-    lessonAuditory.classList.add('lesson__auditory')
+    lessonAuditory.classList.add('lesson__auditory', type)
 
     /* Добавляем номер ауд. и название пары текстом в нужные элементы */
     lessonName.textContent = name
@@ -188,10 +188,19 @@ export default {
                 потом в этой ячейке находится нужная подъячейка (getElementsByClassName('schedule__subcell')[+subcell]),
                 и затем уже добавляем в подъячейку HTML элемент пары (HTML элемент генерируем функцией createLessonBlock)
             */
+            let type = '';
+            if (temp['name'].includes('Консультация')) {
+                type = 'consultation';
+            } else if (temp['name'].includes('Зачет')) {
+                type = 'credit'
+            } else if (temp['name'].includes('Экзамен')) {
+                type = 'exam'
+            }
+
             
             lessonsList.getElementsByClassName('schedule__cell')[+cell]
             .getElementsByClassName('schedule__subcell')[+subcell]
-            .appendChild(createLessonBlock(temp['name'], temp['auditory']))
+            .appendChild(createLessonBlock(temp['name'], temp['auditory'], type))
     }
     },
     computed: {
@@ -222,6 +231,8 @@ export default {
 .schedule__column {
     transition: .7s ease transform;
 }
+
+
 @media (max-width: 1320px) {
     .schedule__column {
         transform: translateX(-1000%);
