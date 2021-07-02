@@ -123,6 +123,14 @@ export default {
     z-index: 1000;
 }
 
+.lesson__name {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .lesson__auditory {
     position: absolute;
     bottom: 10px;

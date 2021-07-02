@@ -1,4 +1,5 @@
 <template>
+    <the-header></the-header>
     <div class="group-selection-wrapper">
         <group-form class="group-input">
             Ваша группа?

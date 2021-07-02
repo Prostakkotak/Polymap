@@ -5,7 +5,21 @@
                 <slot></slot>
             </h1>
             <div class="form-group">
-                <input placeholder="Пример: 201-322" type="text" v-model="inputGroup">
+                <input @focus="openMenu" 
+                        @blur="closeMenu"
+                
+                @input="change" placeholder="Пример: 201-322" type="text" v-model="inputGroup">
+                <ul :class="open ? 'dropdown-menu_active' : ''" class="dropdown-menu">
+                    <li 
+                    class="dropdown-item"
+                    v-for="(suggestion, index) in matches"
+                     :key="suggestion"
+                     :class="{'dropdown-item_active': isActive(index)}"
+                     @click="suggestionClick(index)"
+                     >
+                        {{ suggestion }}
+                    </li>
+                </ul>
                 <button>></button>
             </div>
             <div v-if="isntValide" class="invalide">
@@ -15,22 +29,45 @@
     </keep-alive>
 </template>
 <script>
-
+import axios from 'axios';
 import { mapActions, mapGetters } from 'vuex';
 export default {
     data() {
         return {
             isntValide: false,
             inputGroup: '',
+            groups: [],
+            open: false,
+            current: 0
         }
     },
     created () {
+
+        axios.get(`https://rasp.dmami.ru/groups-list.json`)
+        .then(response => {
+            this.groups = response.data.groups;
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+        
         if (this.group !== null) {
             this.inputGroup = this.group;
         }
     },
     computed: {
-        ...mapGetters(['group', 'schedule', 'isScheduleReady'])
+        ...mapGetters(['group', 'schedule', 'isScheduleReady']),
+        matches() {
+            return this.groups.filter((str) => {
+                return str.indexOf(this.inputGroup) >= 0;
+            })
+        },
+
+        openSuggestion() {
+            return this.inputGroup !== "" &&
+                    this.matches.length != 0 &&
+                    this.open === true;
+        }
     },
     methods: {
         ...mapActions(['selectGroup', 'getSchedule']),
@@ -39,6 +76,28 @@ export default {
             this.getSchedule();
             this.$router.push('/schedule/');
             this.isntValide = false;
+        },
+        isActive(index) {
+            return index === this.current;
+        },
+        change() {
+            if (this.open == false) {
+                this.open = true;
+                this.current = 0;
+            }
+        },
+        suggestionClick(index) {
+            this.inputGroup = this.matches[index];
+            this.open = false;
+            this.submitForm();
+        },
+        openMenu() {
+            this.open = true;
+        },
+        closeMenu() {
+            setTimeout(() => {
+                this.open = false;
+            }, 300) 
         }
     },
 }
@@ -91,8 +150,9 @@ export default {
     }
 
     input:focus {
-        border-radius: 20px;
+        border-radius: 20px 20px 0 0;
     }
+
 
 
     h1 {
@@ -102,6 +162,37 @@ export default {
         letter-spacing: normal;
         margin-bottom: 30px;
     }
+
+    .dropdown-menu {
+        position: absolute;
+        text-align: center;
+        left: 0;
+        right: 0;
+        visibility: hidden;
+        max-height: 160px;
+        overflow-y: scroll;
+    }
+
+    .dropdown-menu_active {
+        visibility: visible;
+    }
+
+
+    .dropdown-item {
+        background-color: #333;
+        padding: 5px 0;
+        border: 1px solid #fff;
+        cursor: pointer;
+    }
+
+    .gropdown-item:hover {
+        background-color: gray;
+    }
+
+    .dropdown-item_active {
+        background-color: gray;
+    }
+
 
 
     @media (max-width: 720px) {
